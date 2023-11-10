@@ -12,6 +12,8 @@ This project automates the deployment of ContainerLab tools on an AWS EC2 instan
 - AWS Account
 - Terraform installed
 - Ansible installed
+- SSH key configured
+- Route 53 domaine configured
 
 ## Usage
 

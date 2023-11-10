@@ -1,6 +1,8 @@
 ---
 - hosts: all
   become: yes
+  vars:
+    repo_git_url: ""
   tasks:
 
   - name: Install required system packages
@@ -14,6 +16,8 @@
         - virtualenv
         - python3-setuptools
         - git
+        - tree
+        - htop
       state: latest
       update_cache: true
 
@@ -43,3 +47,44 @@
       curl -sL https://get.containerlab.dev | sudo bash
     args:
       creates: /usr/local/bin/containerlab
+
+  - name: Ensure /opt/containerlab directory exists
+    file:
+      path: /opt/containerlab
+      state: directory
+      mode: '0755'
+      owner: admin
+      group: admin
+    become: yes
+
+  - name: Ensure user 'admin' exists
+    user:
+      name: admin
+      append: yes
+      groups: docker
+      shell: /bin/bash
+    become: yes
+
+  - name: Clone specified GitHub repository to /opt/containerlab
+    git:
+      repo: "{{ repo_git_url }}"
+      dest: "/opt/containerlab/projet/"
+      clone: yes
+      update: yes
+      version: "main"
+    become: yes
+    when: repo_git_url | length > 0
+
+  - name: Copy network images to remote /tmp directory
+    copy:
+      src: "{{ item }}"
+      dest: "/tmp/{{ item | basename }}"
+    with_fileglob:
+      - "../network_images/*"
+    when: inventory_hostname in groups['all']
+
+  - name: Import network image to Docker with specific tag
+    command:
+      cmd: "docker import /tmp/{{ item | basename }} {{ (item | basename | regex_replace('^(\\D+)-.*-(.*)\\.tar\\.xz', '\\1')) | lower }}:{{ item | basename | regex_replace('^(\\D+)-.*-(.*)\\.tar\\.xz', '\\2') }}"
+    loop: "{{ query('fileglob', '../network_images/*.tar.xz') }}"
+    when: inventory_hostname in groups['all']
