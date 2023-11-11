@@ -94,7 +94,6 @@ The image will be imported into Docker with the tag `ceos:4.30.3M`.
 
 Please ensure that all image files in the `network_images` folder conform to this naming convention for the automated process to function correctly.
 
-
 ## Accessing ContainerLab
 
 - You can access the ContainerLab instance via SSH using the public IP or the DNS name provided by Route53.
