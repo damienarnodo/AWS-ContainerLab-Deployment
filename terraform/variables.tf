@@ -20,3 +20,8 @@ variable "AWS_AMIS" {
     "eu-west-3" = "ami-087da76081e7685da"
   }
 }
+
+variable "instance_type" {
+  type = string
+  default = "t2.xlarge"
+}
