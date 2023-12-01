@@ -122,7 +122,3 @@ Contributions to this project are welcome. Please ensure you follow the establis
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
----
-
-This README provides a comprehensive guide for users on how to use your project. You can add this to your GitHub repository by creating a new file named `README.md` and pasting this content into it. Be sure to replace `<repository_url>` with the actual URL of your GitHub repository.
