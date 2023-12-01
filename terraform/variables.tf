@@ -22,6 +22,6 @@ variable "AWS_AMIS" {
 }
 
 variable "instance_type" {
-  type = string
+  type    = string
   default = "t2.xlarge"
 }
