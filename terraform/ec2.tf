@@ -29,7 +29,7 @@ resource "aws_security_group" "netlab_sg" {
 }
 
 resource "aws_instance" "containerlab_host" {
-  ami                    = var.AWS_AMIS[var.AWS_REGION]
+  ami                    = var.AWS_AMI[var.AWS_REGION]
   instance_type          = "t2.xlarge"
   key_name               = var.AWS_KEY_NAME
   vpc_security_group_ids = [aws_security_group.netlab_sg.id]
@@ -46,6 +46,11 @@ resource "aws_instance" "containerlab_host" {
   }
 
   provisioner "local-exec" {
-    command = "sleep 20; ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u admin -i ../ansible/inventory --private-key ${var.AWS_KEY_LOCATION} ../ansible/install_containerlab.yml --extra-vars repo_git_url=${var.GITHUB_REPO_URL}"
+    command = <<EOT
+      sleep 20
+      ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u admin -i ../ansible/inventory --private-key ${var.AWS_KEY_LOCATION} ../ansible/install_containerlab.yml \
+      ${var.GITHUB_REPO_URL != "" ? "--extra-vars repo_git_url=${var.GITHUB_REPO_URL}" : ""} \
+      ${var.LOCAL_DIR_PATH != "" ? "--extra-vars local_dir_path=${var.LOCAL_DIR_PATH}" : ""}
+    EOT
   }
 }

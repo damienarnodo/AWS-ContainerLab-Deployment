@@ -18,6 +18,7 @@
         - git
         - tree
         - htop
+        - rsync
       state: latest
       update_cache: true
 
@@ -74,6 +75,14 @@
       version: "main"
     become: yes
     when: repo_git_url | length > 0
+
+  - name: Synchronize local directory to VM
+    synchronize:
+      src: "{{ local_dir_path }}"
+      dest: "/opt/containerlab/projet/"
+      recursive: yes
+    become: yes
+    when: local_dir_path | length > 0
 
   - name: Copy network images to remote /tmp directory
     copy:
