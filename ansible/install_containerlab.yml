@@ -3,6 +3,7 @@
   become: yes
   vars:
     repo_git_url: ""
+    local_dir_path: ""
   tasks:
 
   - name: Install required system packages
