@@ -71,6 +71,7 @@
     git:
       repo: "{{ repo_git_url }}"
       dest: "/opt/containerlab/projet/"
+      accept_hostkey: yes
       clone: yes
       update: yes
       version: "main"
