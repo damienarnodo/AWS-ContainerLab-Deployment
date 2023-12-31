@@ -61,14 +61,14 @@ Before you begin, ensure you have the following prerequisites installed and conf
     terraform apply -var="GITHUB_REPO_URL=https://github.com/MasqAs/projet-vxlan-automation"
     ```
 
-    Or, if you want to clone a local directory:
+    Or, if you want to push a local directory:
 
     ```bash
     terraform apply -var="LOCAL_DIR_PATH=/path/to/your/local/directory"
     ```
 
-    > [!note]  
-    > Note that there is no synchronization between your remote folder and your local folder once the instance has been created.
+    >:pen:  **if you use the local folder**  
+    >Note that there is no synchronization between your remote folder and your local folder once the instance has been created.
 
     Enter `yes` when prompted to proceed.
 
