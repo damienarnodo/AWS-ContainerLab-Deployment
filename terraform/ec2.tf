@@ -33,6 +33,9 @@ resource "aws_instance" "containerlab_host" {
   instance_type          = var.INSTANCE_TYPE
   key_name               = var.AWS_KEY_NAME
   vpc_security_group_ids = [aws_security_group.netlab_sg.id]
+  tags = {
+    Name = "ContainerLab"
+  }
 
   root_block_device {
     volume_size           = "128"

@@ -2,6 +2,11 @@
 
 This project automates the deployment of ContainerLab on an AWS EC2 instance using Terraform for infrastructure provisioning and Ansible for software setup and configuration. It also configures a Route53 DNS record for easy access to the ContainerLab instance.
 
+## To Do
+
+- [ ] Improving documentation
+- [ ] Complete DNS configuration conditioning
+
 ## Prerequisites
 
 Before you begin, ensure you have the following prerequisites installed and configured:
@@ -84,7 +89,12 @@ The `network_images` folder is intended for Docker images that will be used by C
 
 - You can access the ContainerLab instance via SSH using the public IP or the DNS name provided by Route53.
 - The public IP of the instance can be found in the Terraform output.
-- The DNS name will be in the format containerlab `<your_route53_zone_name>`
+- The DNS name will be in the format containerlab `<your_route53_zone_name>`.
+
+> :warning: **ROUTE 53**  
+> By default, Route 53 is disabled to avoid errors in case of incomplete configuration.  
+> To enable it, modify the variables: `AWS_R53_ENABLED` and `AWS_R53_ZONE_ID`.  
+> In any case, `AWS_R53_ZONE_ID` need to be configured.
 
 ## Customization
 
