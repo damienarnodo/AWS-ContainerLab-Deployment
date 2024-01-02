@@ -93,9 +93,3 @@
     with_fileglob:
       - "../network_images/*"
     when: inventory_hostname in groups['all']
-
-  - name: Import network image to Docker with specific tag
-    command:
-      cmd: "docker import /tmp/{{ item | basename }} {{ (item | basename | regex_replace('^(\\D+)-.*-(.*)\\.tar\\.xz', '\\1')) | lower }}:{{ item | basename | regex_replace('^(\\D+)-.*-(.*)\\.tar\\.xz', '\\2') }}"
-    loop: "{{ query('fileglob', '../network_images/*.tar.xz') }}"
-    when: inventory_hostname in groups['all']

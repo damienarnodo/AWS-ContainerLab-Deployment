@@ -26,7 +26,7 @@ variable "AWS_AMI" {
   }
 }
 
-variable "instance_type" {
+variable "INSTANCE_TYPE" {
   type    = string
   default = "t2.xlarge"
 }
