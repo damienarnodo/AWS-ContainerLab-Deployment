@@ -38,7 +38,7 @@ terraform.rc
 
 # Data file
 inventory
-network_images/ceos-lab-4.30.3M.tar.xz
+network_images/*.tar.xz
 .DS_Store
 .vscode/settings.json
 .vscode
