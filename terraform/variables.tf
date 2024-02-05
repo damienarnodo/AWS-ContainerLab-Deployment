@@ -8,6 +8,11 @@ variable "AWS_R53_ENABLED" {
   default = false
 }
 
+variable "AWS_LOCAL_IP" {
+  type = string
+  default = "0.0.0.0/0"
+}
+
 variable "GITHUB_REPO_URL" {
   type    = string
   default = ""

@@ -18,13 +18,13 @@ resource "aws_security_group" "netlab_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.AWS_LOCAL_IP]
   }
   ingress {
     from_port   = 50080
     to_port     = 50080
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.AWS_LOCAL_IP]
   }
 }
 
