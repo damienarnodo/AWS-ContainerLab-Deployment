@@ -3,10 +3,6 @@ variable "AWS_SECRET_KEY" {}
 variable "AWS_KEY_NAME" {}
 variable "AWS_KEY_LOCATION" {}
 variable "AWS_R53_ZONE_ID" {}
-variable "AWS_R53_ENABLED" {
-  type    = bool
-  default = false
-}
 
 variable "AWS_LOCAL_IP" {
   type = string

@@ -3,5 +3,5 @@ output "public_ip" {
 }
 
 output "containerlab_fqdn" {
-  value = var.AWS_R53_ENABLED && length(aws_route53_record.containerlab_fqdn) > 0 ? "${aws_route53_record.containerlab_fqdn[0].name}.${data.aws_route53_zone.selected.name}" : ""
+  value = "${aws_route53_record.containerlab_fqdn.name}.${data.aws_route53_zone.selected.name}"
 }
