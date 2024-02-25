@@ -42,3 +42,4 @@ network_images/*.tar.xz
 .DS_Store
 .vscode/settings.json
 .vscode
+ansible/clab_vars.yml

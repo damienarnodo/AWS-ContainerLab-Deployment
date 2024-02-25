@@ -1,11 +1,6 @@
 # AWS ContainerLab Deployment
 
-This project automates the deployment of ContainerLab on an AWS EC2 instance using Terraform for infrastructure provisioning and Ansible for software setup and configuration. It also configures a Route53 DNS record for easy access to the ContainerLab instance.
-
-## To Do
-
-- [ ] Improving documentation
-- [ ] Complete DNS configuration conditioning
+This project automates the deployment of ContainerLab on an AWS EC2 instance using Terraform for infrastructure provisioning and Ansible for software setup and configuration. It also configures a [tailscale access](https://tailscale.com) for easy access to the ContainerLab instance.
 
 ## Prerequisites
 
@@ -14,9 +9,11 @@ Before you begin, ensure you have the following prerequisites installed and conf
 - AWS CLI
 - Terraform
 - Ansible
+- Ansible module : [ansible.posix](https://galaxy.ansible.com/ui/repo/published/ansible/posix/)
 - Git (if cloning the repository)
 - An AWS account with the necessary permissions
-- A configured AWS Key Pair
+- A configured [AWS Key Pair](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html)
+- Tailscale [Authentication Key](https://tailscale.com/kb/1085/auth-keys)
 
 ## Installation
 
@@ -25,11 +22,19 @@ Before you begin, ensure you have the following prerequisites installed and conf
     Set your AWS credentials and other sensitive data in **terraform/terraform.tfvars**.  
     Example:
 
-    ```bash
+    ```tfvars
     AWS_ACCESS_KEY = "your_access_key"
     AWS_SECRET_KEY = "your_secret_key"
     AWS_REGION     = "desired_aws_region"
     AWS_KEY_NAME   = "your_key_pair_name"
+    ```
+
+    Set your Tailscale Key and your git repository or local folder in **ansible/clab_variables.yml**
+
+    ```yml
+    repo_git_url: ""
+    local_dir_path: ""
+    tailscale_auth_key: ""
     ```
 
     **Important**: Never commit terraform.tfvars to version control as it contains sensitive information.
@@ -60,23 +65,6 @@ Before you begin, ensure you have the following prerequisites installed and conf
     terraform apply
     ```
 
-    If you want to clone a specific GitHub repository during installation, pass the repository URL as a variable:
-
-    ```bash
-    terraform apply -var="GITHUB_REPO_URL=https://github.com/MasqAs/projet-vxlan-automation"
-    ```
-
-    Or, if you want to push a local directory:
-
-    ```bash
-    terraform apply -var="LOCAL_DIR_PATH=/path/to/your/local/directory"
-    ```
-
-    >:pen:  **if you use the local folder**  
-    >Note that there is no synchronization between your remote folder and your local folder once the instance has been created.
-
-    Enter `yes` when prompted to proceed.
-
 5. **Ansible Automation**
 
     The Terraform configuration will automatically trigger the Ansible playbook install_containerlab.yml after the EC2 instance is up. This playbook configures the instance with the necessary packages and settings, installs ContainerLab, and optionally clones the specified GitHub repository.
@@ -85,21 +73,11 @@ Before you begin, ensure you have the following prerequisites installed and conf
 
 The `network_images` folder is intended for Docker images that will be used by ContainerLab. These images should be pre-downloaded and placed in this folder before running the Ansible playbook. During the setup process, the images will be copied to the remote `/tmp` directory of the ContainerLab host and then imported into Docker.
 
-## Accessing ContainerLab
-
-- You can access the ContainerLab instance via SSH using the public IP or the DNS name provided by Route53.
-- The public IP of the instance can be found in the Terraform output.
-- The DNS name will be in the format containerlab `<your_route53_zone_name>`.
-
-> :warning: **ROUTE 53**  
-> By default, Route 53 is disabled to avoid errors in case of incomplete configuration.  
-> To enable it, modify the variables: `AWS_R53_ENABLED` and `AWS_R53_ZONE_ID`.  
-> In any case, `AWS_R53_ZONE_ID` need to be configured.
-
 ## Customization
 
 - You can customize the deployment by modifying the Terraform variables in **terraform/variables.tf**.
 - The Ansible playbook can be customized by editing **ansible/install_containerlab.yml**.
+- You have to configure Ansible by add variables in **ansible/clab_variables.yml**
 
 ## Clean Up
 
