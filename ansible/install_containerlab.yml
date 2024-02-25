@@ -1,10 +1,13 @@
 ---
 - hosts: all
   become: yes
-  vars:
-    repo_git_url: ""
-    local_dir_path: ""
+  vars_files:
+  - ./clab_vars.yml
   tasks:
+
+  - name: Set hostname to ContainerLab
+    hostname:
+      name: ContainerLab
 
   - name: Install required system packages
     apt:
@@ -43,6 +46,27 @@
     user:
       name: "{{ ansible_user_id }}"
       group: docker
+
+  - name: Add Tailscale GPG apt Key
+    apt_key:
+      url: https://pkgs.tailscale.com/stable/ubuntu/focal.noarmor.gpg
+      state: present
+
+  - name: Add Tailscale Repository
+    apt_repository:
+      repo: deb https://pkgs.tailscale.com/stable/ubuntu/ focal main
+      state: present
+      filename: tailscale
+      update_cache: yes
+
+  - name: Update apt and install Tailscale
+    apt:
+      name: tailscale
+      state: latest
+      update_cache: yes
+
+  - name: Run Tailscale CLI command
+    command: "sudo tailscale up --authkey {{ tailscale_auth_key }}"
   
   - name: Install ContainerLab
     shell: |
@@ -76,15 +100,15 @@
       update: yes
       version: "main"
     become: yes
-    when: repo_git_url | length > 0
+    when: (repo_git_url is defined) and (repo_git_url | length > 0)
 
   - name: Synchronize local directory to VM
-    synchronize:
+    ansible.posix.synchronize:
       src: "{{ local_dir_path }}"
       dest: "/opt/containerlab/projet/"
       recursive: yes
     become: yes
-    when: local_dir_path | length > 0
+    when: (local_dir_path is defined) and (local_dir_path | length > 0)
 
   - name: Copy network images to remote /tmp directory
     copy:

@@ -14,9 +14,11 @@ Before you begin, ensure you have the following prerequisites installed and conf
 - AWS CLI
 - Terraform
 - Ansible
+- Ansible module : ansible.posix
 - Git (if cloning the repository)
 - An AWS account with the necessary permissions
 - A configured AWS Key Pair
+- Tailscale Authentication Key
 
 ## Installation
 
