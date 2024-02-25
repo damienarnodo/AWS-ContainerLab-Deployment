@@ -1,119 +1,127 @@
 ---
-- hosts: all
-  become: yes
+- name: "Containerlab Installation"
+  hosts: all
+  become: true
   vars_files:
-  - ./clab_vars.yml
+    - ./clab_vars.yml
   tasks:
 
-  - name: Set hostname to ContainerLab
-    hostname:
-      name: ContainerLab
+    - name: Set hostname to ContainerLab
+      ansible.builtin.hostname:
+        name: ContainerLab
 
-  - name: Install required system packages
-    apt:
-      pkg:
-        - apt-transport-https
-        - ca-certificates
-        - curl
-        - software-properties-common
-        - python3-pip
-        - virtualenv
-        - python3-setuptools
-        - git
-        - tree
-        - htop
-        - rsync
-      state: latest
-      update_cache: true
+    - name: Install required system packages
+      ansible.builtin.apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+          - git
+          - tree
+          - htop
+          - rsync
+        update_cache: true
 
-  - name: Add Docker GPG apt Key
-    apt_key:
-      url: https://download.docker.com/linux/ubuntu/gpg
-      state: present
+    - name: Add Docker GPG apt Key
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
 
-  - name: Add Docker Repository
-    apt_repository:
-      repo: deb https://download.docker.com/linux/ubuntu focal stable
-      state: present
+    - name: Add Docker Repository
+      ansible.builtin.apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
 
-  - name: Update apt and install docker-ce
-    apt:
-      name: docker-ce
-      state: latest
-      update_cache: true
+    - name: Update apt and install docker-ce
+      ansible.builtin.apt:
+        name: docker-ce
+        update_cache: true
 
-  - name: Add the current user to the docker group
-    user:
-      name: "{{ ansible_user_id }}"
-      group: docker
+    - name: Add the current user to the docker group
+      ansible.builtin.user:
+        name: "{{ ansible_user_id }}"
+        group: docker
 
-  - name: Add Tailscale GPG apt Key
-    apt_key:
-      url: https://pkgs.tailscale.com/stable/ubuntu/focal.noarmor.gpg
-      state: present
+    - name: Add Tailscale GPG apt Key
+      ansible.builtin.apt_key:
+        url: https://pkgs.tailscale.com/stable/ubuntu/focal.noarmor.gpg
+        state: present
 
-  - name: Add Tailscale Repository
-    apt_repository:
-      repo: deb https://pkgs.tailscale.com/stable/ubuntu/ focal main
-      state: present
-      filename: tailscale
-      update_cache: yes
+    - name: Add Tailscale Repository
+      ansible.builtin.apt_repository:
+        repo: deb https://pkgs.tailscale.com/stable/ubuntu/ focal main
+        state: present
+        filename: tailscale
+        update_cache: true
 
-  - name: Update apt and install Tailscale
-    apt:
-      name: tailscale
-      state: latest
-      update_cache: yes
+    - name: Update apt and install Tailscale
+      ansible.builtin.apt:
+        name: tailscale
+        update_cache: true
 
-  - name: Run Tailscale CLI command
-    command: "sudo tailscale up --authkey {{ tailscale_auth_key }}"
-  
-  - name: Install ContainerLab
-    shell: |
-      curl -sL https://get.containerlab.dev | sudo bash
-    args:
-      creates: /usr/local/bin/containerlab
+    - name: Run Tailscale CLI command
+      ansible.builtin.command: "sudo tailscale up --authkey {{ tailscale_auth_key }}"
+      register: tailscale_output
+      changed_when: tailscale_output.rc != 0
 
-  - name: Ensure /opt/containerlab directory exists
-    file:
-      path: /opt/containerlab
-      state: directory
-      mode: '0755'
-      owner: admin
-      group: admin
-    become: yes
+    - name: Add ContainerLab Repository
+      ansible.builtin.apt_repository:
+        repo: deb [trusted=yes] https://apt.fury.io/netdevops/ /
+        state: present
+        filename: netdevops.list
+        update_cache: true
 
-  - name: Ensure user 'admin' exists
-    user:
-      name: admin
-      append: yes
-      groups: docker
-      shell: /bin/bash
-    become: yes
+    - name: Update apt and install ContainerLab
+      ansible.builtin.apt:
+        name: containerlab
+        update_cache: true
 
-  - name: Clone specified GitHub repository to /opt/containerlab
-    git:
-      repo: "{{ repo_git_url }}"
-      dest: "/opt/containerlab/projet/"
-      accept_hostkey: yes
-      clone: yes
-      update: yes
-      version: "main"
-    become: yes
-    when: (repo_git_url is defined) and (repo_git_url | length > 0)
+    - name: Ensure /opt/containerlab directory exists
+      ansible.builtin.file:
+        path: /opt/containerlab
+        state: directory
+        mode: '0755'
+        owner: admin
+        group: admin
+      become: true
 
-  - name: Synchronize local directory to VM
-    ansible.posix.synchronize:
-      src: "{{ local_dir_path }}"
-      dest: "/opt/containerlab/projet/"
-      recursive: yes
-    become: yes
-    when: (local_dir_path is defined) and (local_dir_path | length > 0)
+    - name: Ensure user 'admin' exists
+      ansible.builtin.user:
+        name: admin
+        append: true
+        groups: docker
+        shell: /bin/bash
+      become: true
 
-  - name: Copy network images to remote /tmp directory
-    copy:
-      src: "{{ item }}"
-      dest: "/tmp/{{ item | basename }}"
-    with_fileglob:
-      - "../network_images/*"
-    when: inventory_hostname in groups['all']
+    - name: Clone specified GitHub repository to /opt/containerlab
+      ansible.builtin.git:
+        repo: "{{ repo_git_url }}"
+        dest: "/opt/containerlab/projet/"
+        accept_hostkey: true
+        clone: true
+        update: true
+        version: "main"
+      become: true
+      when: (repo_git_url is defined) and (repo_git_url | length > 0)
+
+    - name: Synchronize local directory to VM
+      ansible.posix.synchronize:
+        src: "{{ local_dir_path }}"
+        dest: "/opt/containerlab/projet/"
+        recursive: true
+      become: true
+      when: (local_dir_path is defined) and (local_dir_path | length > 0)
+
+    - name: Copy network images to remote /tmp directory
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "/tmp/{{ item | basename }}"
+        mode: '0755'
+      with_fileglob:
+        - "../network_images/*"
+      when:
+        - inventory_hostname in groups['all']
