@@ -97,6 +97,28 @@
         shell: /bin/bash
       become: true
 
+    - name: Ensure the /opt/edgeshark directory exists
+      ansible.builtin.file:
+        path: /opt/edgeshark
+        state: directory
+        mode: '0755'
+
+    - name: Download the edgeshark docker-compose.yaml file
+      ansible.builtin.get_url:
+        url: https://github.com/siemens/edgeshark/raw/main/deployments/wget/docker-compose.yaml
+        dest: "/opt/edgeshark/docker-compose.yaml"
+        mode: '0644'
+
+    - name: Deploy edgeshark using docker-compose
+      community.docker.docker_compose:
+        project_name: edgeshark
+        chdir: /opt/edgeshark
+        compose_files:
+          - "/opt/edgeshark/docker-compose.yaml"
+        state: present
+        pull: yes
+        restarted: yes
+
     - name: Clone specified GitHub repository to /opt/containerlab
       ansible.builtin.git:
         repo: "{{ repo_git_url }}"

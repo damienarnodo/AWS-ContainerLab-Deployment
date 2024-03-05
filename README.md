@@ -9,7 +9,9 @@ Before you begin, ensure you have the following prerequisites installed and conf
 - AWS CLI
 - Terraform
 - Ansible
-- Ansible module : [ansible.posix](https://galaxy.ansible.com/ui/repo/published/ansible/posix/)
+- Ansible module : 
+  - [ansible.posix](https://galaxy.ansible.com/ui/repo/published/ansible/posix/)
+  - [community.docker](https://docs.ansible.com/ansible/latest/collections/community/docker/docker_compose_module.html)
 - Git (if cloning the repository)
 - An AWS account with the necessary permissions
 - A configured [AWS Key Pair](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html)
