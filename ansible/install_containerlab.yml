@@ -36,9 +36,11 @@
         repo: deb https://download.docker.com/linux/ubuntu focal stable
         state: present
 
-    - name: Update apt and install docker-ce
+    - name: Update apt and install docker
       ansible.builtin.apt:
-        name: docker-ce
+        pkg:
+          - docker
+          - docker-compose
         update_cache: true
 
     - name: Add the current user to the docker group
@@ -108,16 +110,6 @@
         url: https://github.com/siemens/edgeshark/raw/main/deployments/wget/docker-compose.yaml
         dest: "/opt/edgeshark/docker-compose.yaml"
         mode: '0644'
-
-    - name: Deploy edgeshark using docker-compose
-      community.docker.docker_compose:
-        project_name: edgeshark
-        chdir: /opt/edgeshark
-        compose_files:
-          - "/opt/edgeshark/docker-compose.yaml"
-        state: present
-        pull: yes
-        restarted: yes
 
     - name: Clone specified GitHub repository to /opt/containerlab
       ansible.builtin.git:
