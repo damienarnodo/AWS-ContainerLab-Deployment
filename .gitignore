@@ -43,3 +43,4 @@ network_images/*.tar.xz
 .vscode/settings.json
 .vscode
 ansible/clab_vars.yml
+terraform/backend.conf

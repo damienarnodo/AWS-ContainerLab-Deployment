@@ -10,22 +10,27 @@ This directory contains the Terraform configuration files for deploying an AWS E
 
 ## Configuration
 
-1. **Set AWS Credentials and Variables**
+1. **Backend Configuration**
 
-   Rename the `terraform.tfvars.sample` to `terraform.tfvars` and update the following variables with your own values:
+    To easily manage the backend configuration, we will store the tfstate files on an S3 bucket.  
+    To update it, please adapt the `backend.conf` file, using the provided sample as a reference.
 
-   ```tfvars
-   AWS_ACCESS_KEY = "your_access_key"
-   AWS_SECRET_KEY = "your_secret_key"
-   AWS_KEY_NAME   = "your_key_pair_name"
-   AWS_KEY_LOCATION = "path_to_your_private_key"
-   ```
+2. **Set AWS Credentials and Variables**
+
+    Rename the `terraform.tfvars.sample` to `terraform.tfvars` and update the following variables with your own values:
+
+    ```tfvars
+    AWS_ACCESS_KEY = "your_access_key"
+    AWS_SECRET_KEY = "your_secret_key"
+    AWS_KEY_NAME   = "your_key_pair_name"
+    AWS_KEY_LOCATION = "path_to_your_private_key"
+    ```
 
     **Important** : Never commit `terraform.tfvars` to version control as it contains sensitive information.
 
-2. **Customize Terraform Variables**
+3. **Customize Terraform Variables**
 
-    You can customize the deployment by modifying the Terraform variables in `variables.tf`.
+  You can customize the deployment by modifying the Terraform variables in `variables.tf`.
 
 ## Action made by the EC2.tf file
 
