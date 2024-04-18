@@ -56,7 +56,7 @@ Before you begin, ensure you have the following prerequisites installed and conf
 
     ```bash
     cd terraform
-    terraform init
+    terraform init --backend-config="backend.conf"
     ```
 
 4. **Apply Terraform Configuration**

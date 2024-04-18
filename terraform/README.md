@@ -10,7 +10,11 @@ This directory contains the Terraform configuration files for deploying an AWS E
 
 ## Configuration
 
-1. **Set AWS Credentials and Variables**
+1. **Backend Configuration**
+
+  To easily managed backend configuration, we will store the tfstate files on a S3 bucket
+
+2. **Set AWS Credentials and Variables**
 
    Rename the `terraform.tfvars.sample` to `terraform.tfvars` and update the following variables with your own values:
 
@@ -23,7 +27,7 @@ This directory contains the Terraform configuration files for deploying an AWS E
 
     **Important** : Never commit `terraform.tfvars` to version control as it contains sensitive information.
 
-2. **Customize Terraform Variables**
+3. **Customize Terraform Variables**
 
     You can customize the deployment by modifying the Terraform variables in `variables.tf`.
 
