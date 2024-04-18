@@ -1,0 +1,3 @@
+bucket = "YOUR_UNIQUE_BUCKET_NAME"
+key    = "YOUR_OBJECT_KEY"
+region = "YOUR_REGION"
