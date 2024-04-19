@@ -24,6 +24,7 @@
           - tree
           - htop
           - rsync
+          - docker-compose-plugin
         update_cache: true
 
     - name: Add Docker GPG apt Key
